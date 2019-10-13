@@ -49,11 +49,6 @@ func (dp *DiscordProxy) Run(messageChan chan *executor.Message, responseChan cha
 		return
 	}
 
-	// fmt.Println("Airhorn is now running.  Press CTRL-C to exit.")
-	// sc := make(chan os.Signal, 1)
-	// signal.Notify(sc, syscall.SIGINT, syscall.SIGTERM, os.Interrupt, os.Kill)
-	// <-sc
-
 	<-quitChan
 
 	// Cleanly close down the Discord session.
