@@ -1,6 +1,7 @@
 package executor
 
 import (
+	"fmt"
 	"regexp"
 )
 
@@ -43,6 +44,7 @@ func (r *Router) Run(pipe chan *Message) {
 	for {
 		select {
 		case message := <-pipe:
+			fmt.Println(message)
 			r.Route(message)
 			close(pipe)
 			return

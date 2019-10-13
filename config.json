@@ -1,0 +1,4 @@
+{
+    "db_uri": "mongodb://localhost:27017",
+    "discord_bot_token": ""
+}
