@@ -6,9 +6,6 @@ package proxies
 import (
 	"fmt"
 	"hi_bot/executor"
-	"os"
-	"os/signal"
-	"syscall"
 
 	"github.com/bwmarrin/discordgo"
 )
@@ -33,7 +30,7 @@ func (dp *DiscordProxy) onMessage(s *discordgo.Session, m *discordgo.MessageCrea
 	}
 }
 
-func (dp *DiscordProxy) Run(messageChan chan *executor.Message, responseChan chan []string) {
+func (dp *DiscordProxy) Run(messageChan chan *executor.Message, responseChan chan []string, quitChan chan int) {
 	dp.messageChan = messageChan
 	dp.responseChan = responseChan
 
@@ -52,10 +49,12 @@ func (dp *DiscordProxy) Run(messageChan chan *executor.Message, responseChan cha
 		return
 	}
 
-	fmt.Println("Airhorn is now running.  Press CTRL-C to exit.")
-	sc := make(chan os.Signal, 1)
-	signal.Notify(sc, syscall.SIGINT, syscall.SIGTERM, os.Interrupt, os.Kill)
-	<-sc
+	// fmt.Println("Airhorn is now running.  Press CTRL-C to exit.")
+	// sc := make(chan os.Signal, 1)
+	// signal.Notify(sc, syscall.SIGINT, syscall.SIGTERM, os.Interrupt, os.Kill)
+	// <-sc
+
+	<-quitChan
 
 	// Cleanly close down the Discord session.
 	dg.Close()

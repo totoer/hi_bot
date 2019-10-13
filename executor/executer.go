@@ -1,6 +1,8 @@
 package executor
 
 import (
+	"path/filepath"
+
 	lua "github.com/yuin/gopher-lua"
 )
 
@@ -26,7 +28,7 @@ func ExecHandler(author, message, script string) (string, bool) {
 	L.SetGlobal("saveDoc", L.NewFunction(saveDoc))
 	L.SetGlobal("deleteDoc", L.NewFunction(deleteDoc))
 
-	if err := L.DoFile(script); err != nil {
+	if err := L.DoFile(filepath.Join("./bots", script)); err != nil {
 		panic(err)
 	}
 
