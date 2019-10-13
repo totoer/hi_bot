@@ -44,16 +44,6 @@ func main() {
 		panic("Config not readed")
 	}
 
-	// var dbClient *mongo.Client
-	// dbClient, err = mongo.NewClient(options.Client().ApplyURI(viper.GetString("db_uri")))
-	// if err != nil {
-	// 	panic("Error")
-	// }
-
-	// err = dbClient.Connect(context.Background()); err != nil {
-	// 	panic("Error")
-	// }
-
 	router := executor.NewRouter()
 
 	botFiles, err := ioutil.ReadDir("./bots")
@@ -77,11 +67,6 @@ func main() {
 			router.Append(string(submatch[1]), f.Name())
 		}
 	}
-
-	// bots := models.FindAllBot(dbClient)
-	// for _, bot := range bots {
-	// 	router.Append(bot.Template, bot.Script)
-	// }
 
 	discordMessageChan := make(chan *executor.Message)
 	discordResponseChan := make(chan []string)
