@@ -1,6 +1,7 @@
 package executor
 
 import (
+	"log"
 	"path/filepath"
 
 	"github.com/spf13/viper"
@@ -22,7 +23,7 @@ func ExecHandler(author, message, script string) (string, bool) {
 
 	botFilepath := filepath.Join(viper.GetString("bots_path"), script)
 	if err := L.DoFile(botFilepath); err != nil {
-		panic(err)
+		log.Println("Bot script not opening: ", err)
 	}
 
 	if err := L.CallByParam(lua.P{
@@ -30,7 +31,7 @@ func ExecHandler(author, message, script string) (string, bool) {
 		NRet:    1,                   // number of returned values
 		Protect: true,                // return err or panic
 	}, lua.LString(author), lua.LString(message)); err != nil {
-		panic(err)
+		log.Println("Bot script error: ", err)
 	}
 
 	if result, ok := L.Get(-1).(lua.LString); ok {

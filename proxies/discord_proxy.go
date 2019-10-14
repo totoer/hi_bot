@@ -4,8 +4,8 @@ package proxies
 // https://discordapp.com/oauth2/authorize?&client_id=CLIENTID&scope=bot&permissions=8 - for auth bot to chanel
 
 import (
-	"fmt"
 	"hi_bot/executor"
+	"log"
 
 	"github.com/bwmarrin/discordgo"
 )
@@ -21,7 +21,7 @@ func (dp *DiscordProxy) onMessage(s *discordgo.Session, m *discordgo.MessageCrea
 		return
 	}
 
-	fmt.Println("DiscordProxy send message")
+	log.Println("DiscordProxy send message")
 	dp.messageChan <- executor.NewMessage(m.Author.Username, m.Content)
 	responseMessages := <-dp.responseChan
 
@@ -36,7 +36,7 @@ func (dp *DiscordProxy) Run(messageChan chan *executor.Message, responseChan cha
 
 	dg, err := discordgo.New("Bot " + dp.Token)
 	if err != nil {
-		fmt.Println("error creating Discord session,", err)
+		log.Println("error creating Discord session,", err)
 		return
 	}
 
@@ -45,7 +45,7 @@ func (dp *DiscordProxy) Run(messageChan chan *executor.Message, responseChan cha
 	// Open a websocket connection to Discord and begin listening.
 	err = dg.Open()
 	if err != nil {
-		fmt.Println("error opening connection,", err)
+		log.Println("error opening connection,", err)
 		return
 	}
 

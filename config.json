@@ -1,4 +1,5 @@
 {
+    "logfile": "hi_bot.log",
     "login": "admin",
     "password": "admin",
     "bots_path": "./bots",

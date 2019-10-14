@@ -2,7 +2,9 @@ package main
 
 import (
 	"flag"
-	"fmt"
+	"io"
+	"log"
+	"os"
 
 	"hi_bot/executor"
 	"hi_bot/proxies"
@@ -40,6 +42,15 @@ func main() {
 		panic("Config not readed")
 	}
 
+	logFile, err := os.OpenFile(viper.GetString("logfile"), os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
+	if err != nil {
+		panic("Logfile not opening!")
+	}
+	defer logFile.Close()
+
+	logMWriter := io.MultiWriter(os.Stdout, logFile)
+	log.SetOutput(logMWriter)
+
 	router := executor.NewRouter()
 
 	go web.Run()
@@ -50,11 +61,11 @@ func main() {
 	discordProxy := proxies.NewDiscordProxy(viper.GetString("discord_bot_token"))
 	go discordProxy.Run(discordMessageChan, discordResponseChan, discordQuitChan)
 
-	fmt.Println("Start listen proxies")
+	log.Println("Start listen proxies")
 	for {
 		select {
 		case message := <-discordMessageChan:
-			fmt.Println("Receive message from DiscordProxy")
+			log.Println("Receive message from DiscordProxy")
 			process(discordResponseChan, router, message)
 		}
 	}

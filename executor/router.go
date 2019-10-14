@@ -2,7 +2,6 @@ package executor
 
 import (
 	"bufio"
-	"fmt"
 	"io/ioutil"
 	"os"
 	"path/filepath"
@@ -51,7 +50,6 @@ func (r *Router) Run(pipe chan *Message) {
 	for {
 		select {
 		case message := <-pipe:
-			fmt.Println(message)
 			r.Route(message)
 			close(pipe)
 			return

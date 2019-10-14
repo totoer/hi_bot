@@ -3,7 +3,7 @@ package executor
 import (
 	"bytes"
 	"encoding/json"
-	"fmt"
+	"log"
 	"net/http"
 	"path/filepath"
 	"time"
@@ -106,7 +106,8 @@ func luaJSONDecode(L *lua.LState) int {
 	content := L.ToString(1)
 	var rawResult map[string]interface{}
 	if err := json.Unmarshal([]byte(content), &rawResult); err != nil {
-		panic(err)
+		log.Println("luaJSONDecode err: ", err)
+		return 0
 	}
 
 	result := mapToLTable(rawResult)
@@ -159,7 +160,6 @@ func luaHTTPGet(L *lua.LState) int {
 	result := L.NewTable()
 
 	if err != nil {
-		fmt.Println(err)
 		result.RawSetString("status", lua.LNumber(-1))
 		result.RawSetString("body", lua.LString(""))
 	} else {
@@ -180,7 +180,8 @@ func luaKVSet(L *lua.LState) int {
 	dbFilepath := filepath.Join(viper.GetString("bots_path"), viper.GetString("db_name"))
 	db, err := bolt.Open(dbFilepath, 0600, nil)
 	if err != nil {
-		panic(err)
+		log.Println("luaKVSet err: ", err)
+		return 0
 	}
 	defer db.Close()
 
@@ -213,7 +214,8 @@ func luaKVGet(L *lua.LState) int {
 	dbFilepath := filepath.Join(viper.GetString("bots_path"), viper.GetString("db_name"))
 	db, err := bolt.Open(dbFilepath, 0600, nil)
 	if err != nil {
-		panic(err)
+		log.Println("luaKVGet err: ", err)
+		return 0
 	}
 	defer db.Close()
 
@@ -243,7 +245,8 @@ func luaKVDel(L *lua.LState) int {
 	dbFilepath := filepath.Join(viper.GetString("bots_path"), viper.GetString("db_name"))
 	db, err := bolt.Open(dbFilepath, 0600, nil)
 	if err != nil {
-		panic(err)
+		log.Println("luaKVDel err: ", err)
+		return 0
 	}
 	defer db.Close()
 
