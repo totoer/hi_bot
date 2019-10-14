@@ -3,20 +3,9 @@ package executor
 import (
 	"path/filepath"
 
+	"github.com/spf13/viper"
 	lua "github.com/yuin/gopher-lua"
 )
-
-func findDoc(L *lua.LState) int {
-	return 1
-}
-
-func saveDoc(L *lua.LState) int {
-	return 1
-}
-
-func deleteDoc(L *lua.LState) int {
-	return 1
-}
 
 func ExecHandler(author, message, script string) (string, bool) {
 	L := lua.NewState()
@@ -24,11 +13,15 @@ func ExecHandler(author, message, script string) (string, bool) {
 
 	lua.OpenBase(L)
 
-	L.SetGlobal("findDoc", L.NewFunction(findDoc))
-	L.SetGlobal("saveDoc", L.NewFunction(saveDoc))
-	L.SetGlobal("deleteDoc", L.NewFunction(deleteDoc))
+	L.SetGlobal("httpGet", L.NewFunction(luaHTTPGet))
+	L.SetGlobal("jsonDecode", L.NewFunction(luaJSONDecode))
+	L.SetGlobal("jsonEncode", L.NewFunction(luaJSONEncode))
+	L.SetGlobal("kvSet", L.NewFunction(luaKVSet))
+	L.SetGlobal("kvGet", L.NewFunction(luaKVGet))
+	L.SetGlobal("kvDel", L.NewFunction(luaKVDel))
 
-	if err := L.DoFile(filepath.Join("./bots", script)); err != nil {
+	botFilepath := filepath.Join(viper.GetString("bots_path"), script)
+	if err := L.DoFile(botFilepath); err != nil {
 		panic(err)
 	}
 
