@@ -1,3 +1,4 @@
 my_config.json
 .vscode
 bots/bots.db
+bots/_*

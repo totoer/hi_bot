@@ -6,6 +6,7 @@ import (
 
 	"hi_bot/executor"
 	"hi_bot/proxies"
+	"hi_bot/web"
 
 	"github.com/spf13/viper"
 )
@@ -41,27 +42,7 @@ func main() {
 
 	router := executor.NewRouter()
 
-	// botFiles, err := ioutil.ReadDir("./bots")
-	// if err != nil {
-	// 	panic("Bots folder is missing")
-	// }
-
-	// re := regexp.MustCompile("--! (.+)")
-
-	// for _, f := range botFiles {
-	// 	file, _ := os.Open(filepath.Join("./bots", f.Name()))
-	// 	defer file.Close()
-	// 	reader := bufio.NewReader(file)
-	// 	line, err := reader.ReadString('\n')
-	// 	if err != nil {
-	// 		continue
-	// 	}
-
-	// 	if submatch := re.FindSubmatch([]byte(line)); len(submatch) > 1 {
-	// 		fmt.Println("Append bot:", string(submatch[1]), f.Name())
-	// 		router.Append(string(submatch[1]), f.Name())
-	// 	}
-	// }
+	go web.Run()
 
 	discordMessageChan := make(chan *executor.Message)
 	discordResponseChan := make(chan []string)
