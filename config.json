@@ -1,8 +1,8 @@
 {
     "logfile": "hi_bot.log",
-    "login": "admin",
-    "password": "admin",
-    "bots_path": "./bots",
-    "db_name": "bots.db",
+    "bots_config": "bots.json",
+    "bots_lua_path": "./lua_bots",
+    "bots_lua_db_name": "bots.db",
+    "bots_python_path": "./py_bots",
     "discord_bot_token": ""
 }

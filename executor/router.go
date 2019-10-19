@@ -1,12 +1,10 @@
 package executor
 
 import (
-	"bufio"
+	"encoding/json"
 	"io/ioutil"
 	"os"
-	"path/filepath"
 	"regexp"
-	"time"
 
 	"github.com/spf13/viper"
 )
@@ -25,22 +23,32 @@ func NewMessage(author, message string) *Message {
 	return m
 }
 
-type Router struct {
-	Handlers map[string]string
+type Script struct {
+	Template string `json:"template"`
+	Name     string `json:"name"`
 }
 
-func (r *Router) Append(template, script string) {
-	r.Handlers[template] = script
+type Handlers struct {
+	Scripts []Script `json:"scripts"`
 }
+
+type Router struct{}
 
 func (r Router) Route(message *Message) {
-	for template, script := range r.Handlers {
-		re := regexp.MustCompile(template)
+	if jsonFile, err := os.Open(viper.GetString("bots_config")); err == nil {
+		var handlers Handlers
+		defer jsonFile.Close()
+		byteValue, _ := ioutil.ReadAll(jsonFile)
+		json.Unmarshal(byteValue, &handlers)
 
-		if submatch := re.FindSubmatch([]byte(message.Message)); len(submatch) > 1 {
-			response, ok := ExecHandler(message.Author, string(submatch[1]), script)
-			if ok {
-				message.Result = append(message.Result, response)
+		for _, script := range handlers.Scripts {
+			re := regexp.MustCompile(script.Template)
+
+			if submatch := re.FindSubmatch([]byte(message.Message)); len(submatch) > 1 {
+				response, ok := ExecHandler(message.Author, string(submatch[1]), script.Name)
+				if ok {
+					message.Result = append(message.Result, response)
+				}
 			}
 		}
 	}
@@ -57,59 +65,7 @@ func (r *Router) Run(pipe chan *Message) {
 	}
 }
 
-func (r *Router) updateBots() {
-	for {
-		botFiles, err := ioutil.ReadDir(viper.GetString("bots_path"))
-		if err != nil {
-			panic("Bots folder is missing")
-		}
-
-		re := regexp.MustCompile("--! (.+)")
-		var existsTemplates []string
-
-		for _, f := range botFiles {
-			file, _ := os.Open(filepath.Join(viper.GetString("bots_path"), f.Name()))
-			defer file.Close()
-			reader := bufio.NewReader(file)
-			line, err := reader.ReadString('\n')
-			if err != nil {
-				continue
-			}
-
-			if submatch := re.FindSubmatch([]byte(line)); len(submatch) > 1 {
-				template := string(submatch[1])
-
-				existsTemplates = append(existsTemplates, template)
-
-				if _, ok := r.Handlers[template]; !ok {
-					r.Handlers[template] = f.Name()
-				}
-			}
-		}
-
-		for template, _ := range r.Handlers {
-			ok := false
-			for _, existsTemplate := range existsTemplates {
-				if template == existsTemplate {
-					ok = true
-					break
-				}
-			}
-
-			if !ok {
-				delete(r.Handlers, template)
-			}
-		}
-
-		time.Sleep(5 * time.Second)
-	}
-}
-
 func NewRouter() *Router {
 	router := new(Router)
-	router.Handlers = make(map[string]string)
-
-	go router.updateBots()
-
 	return router
 }

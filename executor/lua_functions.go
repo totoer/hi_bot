@@ -177,7 +177,7 @@ func luaHTTPGet(L *lua.LState) int {
 }
 
 func luaKVSet(L *lua.LState) int {
-	dbFilepath := filepath.Join(viper.GetString("bots_path"), viper.GetString("db_name"))
+	dbFilepath := filepath.Join(viper.GetString("bots_lua_path"), viper.GetString("bots_lua_db_name"))
 	db, err := bolt.Open(dbFilepath, 0600, nil)
 	if err != nil {
 		log.Println("luaKVSet err: ", err)
@@ -211,7 +211,7 @@ func luaKVSet(L *lua.LState) int {
 }
 
 func luaKVGet(L *lua.LState) int {
-	dbFilepath := filepath.Join(viper.GetString("bots_path"), viper.GetString("db_name"))
+	dbFilepath := filepath.Join(viper.GetString("bots_lua_path"), viper.GetString("bots_lua_db_name"))
 	db, err := bolt.Open(dbFilepath, 0600, nil)
 	if err != nil {
 		log.Println("luaKVGet err: ", err)
@@ -242,7 +242,7 @@ func luaKVGet(L *lua.LState) int {
 }
 
 func luaKVDel(L *lua.LState) int {
-	dbFilepath := filepath.Join(viper.GetString("bots_path"), viper.GetString("db_name"))
+	dbFilepath := filepath.Join(viper.GetString("bots_lua_path"), viper.GetString("bots_lua_db_name"))
 	db, err := bolt.Open(dbFilepath, 0600, nil)
 	if err != nil {
 		log.Println("luaKVDel err: ", err)

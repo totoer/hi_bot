@@ -1,0 +1,6 @@
+{
+    "scripts": [
+        {"template": "!HiBot (ping)", "name": "ping.lua"},
+        {"template": "!HiBot (факт!)", "name": "short_wiki.lua"}
+    ]
+}

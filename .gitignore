@@ -2,3 +2,5 @@ my_config.json
 .vscode
 bots/bots.db
 bots/_*
+*.log
+node_modules
